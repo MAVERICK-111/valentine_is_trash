@@ -14,8 +14,8 @@ const POSITION_LABELS = { tl: 'Top-Left', tr: 'Top-Right', bl: 'Bot-Left', br: '
 const CAMPUS_BOUNDS = {
   latMin: 19.01772,
   latMax: 19.02572,
-  lngMin: 72.85161,
-  lngMax: 72.85961,
+  lngMin: 72.8450,
+  lngMax: 72.85969,
 };
 
 // ⭐ ADD YOUR MAP IMAGE URL HERE ⭐
@@ -43,9 +43,9 @@ export default function BinRegistry() {
 
   const deptBoxes = {
     TX: { left: 5, top: 20, right: 25, bottom: 80 },
-    EE: { left: 45, top: 20, right: 88, bottom: 40 },
+    EE: { left: 45, top: 20, right: 78, bottom: 40 },
     CV: { left: 28, top: 22, right: 40, bottom: 60 },
-    CS: { left: 65, top: 43, right: 88, bottom: 75 },
+    CS: { left: 65, top: 43, right: 78, bottom: 75 },
   };
 
   const getCornerPositions = useCallback((deptId) => {
