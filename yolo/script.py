@@ -1,23 +1,13 @@
-# from ultralytics import YOLO
-
-# # Load your detection model
-# detection_model = YOLO('weights/best.pt')
-
-
-# # Run inference
-# results = detection_model('img3.png')
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 from ultralytics import YOLO
 from fastapi.middleware.cors import CORSMiddleware
+import os
 import requests
-import torch
 
 app = FastAPI()
 
 model = YOLO("weights/best.pt")
-
 class ImagePayload(BaseModel):
     image_url: str
 
@@ -31,11 +21,16 @@ app.add_middleware(
 
 @app.post("/predict")
 def predict(payload: ImagePayload):
-    results = model(payload.image_url)
+    # Download image from URL
+    response = requests.get(payload.image_url)
+    image_path = "temp.jpg"
 
-    # results is a list → take first image result
+    with open(image_path, "wb") as f:
+        f.write(response.content)
+
+    results = model(image_path)
+
     result = results[0]
-
     boxes = result.boxes
 
     if boxes is not None and len(boxes) > 0:

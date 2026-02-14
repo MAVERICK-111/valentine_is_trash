@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+ultralytics
+torch
+requests
+python-multipart
+pydantic

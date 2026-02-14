@@ -59,7 +59,7 @@ export default function BinRegistry() {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:5000/bins')
+    fetch('https://valentine-is-trash-iod3.vercel.app/bins')
       .then(r => r.json())
       .then(data => {
         const m = {};
@@ -130,7 +130,7 @@ export default function BinRegistry() {
     if (formData.image) data.append('image', formData.image);
 
     try {
-      const res = await fetch('http://localhost:5000/bins', { method: 'POST', body: data });
+      const res = await fetch('https://valentine-is-trash-iod3.vercel.app/bins', { method: 'POST', body: data });
       if (res.ok) {
         const newBin = await res.json();
         const key = `${activeCorner.department}-${activeCorner.position}`;
