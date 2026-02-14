@@ -1,7 +1,7 @@
 const supabase = require("../models/bin");
 const cloudinary = require("../config/cloudinary");
 const axios = require("axios");
-const sendCleaningAlert = require("../mailer.js");
+const { sendCleaningAlert } = require("../mailer.js");
 
 // Create a new bin
 // const createBin = async (req, res) => {
