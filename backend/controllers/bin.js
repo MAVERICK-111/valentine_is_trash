@@ -33,7 +33,7 @@ const createBin = async (req, res) => {
       //YOLO microservice
       try {
         const yoloResponse = await axios.post(
-          "http://localhost:8000/predict",
+          "https://valentine-is-trash.onrender.com/predict",
           {
             image_url: imageUrl,
           }
