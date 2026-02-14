@@ -13,8 +13,8 @@ const POSITION_LABELS = { tl: 'Top-Left', tr: 'Top-Right', bl: 'Bot-Left', br: '
 // Fake campus bounding box → maps GPS to canvas %
 const CAMPUS_BOUNDS = {
   latMin: 19.01772,
-  latMax: 19.02572,
-  lngMin: 72.8450,
+  latMax: 19.02899,
+  lngMin: 72.8515,
   lngMax: 72.85969,
 };
 
