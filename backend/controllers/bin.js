@@ -1,34 +1,35 @@
-const supabase = require("../config/supabase");
+const supabase = require("../models/bin");
+const cloudinary = require("../config/cloudinary");
 
 // Create a new bin
 const createBin = async (req, res) => {
   try {
-    const { latitude, longitude, capacity, department, corner_position, installation_date } = req.body;
-    
+    const {
+      latitude,
+      longitude,
+      capacity,
+      department,
+      corner_position,
+      installation_date,
+    } = req.body;
+
     let imageUrl = null;
 
-    // Upload image to Supabase Storage if provided
+    // Upload image to Cloudinary if provided
     if (req.file) {
-      const fileName = `${Date.now()}-${req.file.originalname}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("bin-images")
-        .upload(fileName, req.file.buffer, {
-          contentType: req.file.mimetype,
-        });
+      const uploadResult = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: "bins" }, (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          })
+          .end(req.file.buffer);
+      });
 
-      if (uploadError) {
-        console.error("Image upload error:", uploadError);
-      } else {
-        // Get public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from("bin-images")
-          .getPublicUrl(fileName);
-        
-        imageUrl = publicUrl;
-      }
+      imageUrl = uploadResult.secure_url;
     }
 
-    // Insert bin data into database
+    // Insert into Supabase
     const { data, error } = await supabase
       .from("bins")
       .insert([
@@ -45,13 +46,12 @@ const createBin = async (req, res) => {
       .select();
 
     if (error) {
-      console.error("Database error:", error);
       return res.status(500).json({ error: error.message });
     }
 
     res.status(201).json(data[0]);
   } catch (error) {
-    console.error("Server error:", error);
+    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -65,13 +65,11 @@ const getBins = async (req, res) => {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Database error:", error);
       return res.status(500).json({ error: error.message });
     }
 
     res.status(200).json(data);
   } catch (error) {
-    console.error("Server error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
