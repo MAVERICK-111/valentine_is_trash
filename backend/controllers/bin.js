@@ -1,5 +1,6 @@
 const supabase = require("../models/bin");
 const cloudinary = require("../config/cloudinary");
+const axios = require("axios");
 
 // Create a new bin
 const createBin = async (req, res) => {
@@ -14,6 +15,8 @@ const createBin = async (req, res) => {
     } = req.body;
 
     let imageUrl = null;
+    let prediction = null;
+    let confidence = 0;
 
     // Upload image to Cloudinary if provided
     if (req.file) {
@@ -27,6 +30,20 @@ const createBin = async (req, res) => {
       });
 
       imageUrl = uploadResult.secure_url;
+      //YOLO microservice
+      try {
+        const yoloResponse = await axios.post(
+          "http://localhost:8000/predict",
+          {
+            image_url: imageUrl,
+          }
+        );
+
+        prediction = yoloResponse.data.prediction;
+        confidence = yoloResponse.data.confidence;
+      } catch (yoloError) {
+        console.error("YOLO API Error:", yoloError.message);
+      }
     }
 
     // Insert into Supabase
@@ -41,14 +58,14 @@ const createBin = async (req, res) => {
           corner_position,
           installation_date,
           image_url: imageUrl,
+          prediction,
+          confidence,
         },
       ])
       .select();
-
     if (error) {
       return res.status(500).json({ error: error.message });
     }
-
     res.status(201).json(data[0]);
   } catch (error) {
     console.error(error);
